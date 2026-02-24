@@ -1880,6 +1880,27 @@
           一键清除
         </button>
 
+        <!--
+            ============================================
+            📱 客服二维码更换说明：
+            - 将你的客服二维码图片命名为 qrcode.png（或qrcode.jpg）
+            - 放在与此HTML文件同一目录下
+            - 然后将下面img标签的src属性改为：src="qrcode.png"
+            
+            示例：
+            <img src="qrcode.png" alt="客服二维码">
+            ============================================
+            -->
+        <div class="contact-image">
+          <p style="color: #d63031; font-weight: 700; margin-bottom: 10px; cursor: pointer; text-decoration: underline;" onclick="showAgeWarning()">
+            ⚠️
+            注意：未成年及实名认证不是本人的请告知客服！！！否则打了不结账！！！！
+          </p>
+          <p style="color: #d63031; font-weight: 700; margin-bottom: 10px; cursor: pointer; text-decoration: underline;" onclick="showAgeWarning()">
+            点击查看实名查询教程和更改实名教程
+          </p>
+        </div>
+
         <div class="quick-fill">
           <div class="quick-fill-header" onclick="toggleQuickFill()">
             📝 解析并自动填充
@@ -1906,10 +1927,10 @@ AWM子弹数量: 20
 6头数量: 1
 6甲数量: 1
 押金: 80元"></textarea>
-               <button class="btn btn-secondary" onclick="parseQuickFill()">
-                 📋 解析并填充
-               </button>
-             </div>
+                <button class="btn btn-secondary" onclick="clearAndPaste()">
+                  📋 点击清空，粘贴自动解析
+                </button>
+              </div>
 
             <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #e0e0e0; text-align: center;">
               <input type="text" id="verifyBox" style="
@@ -1927,27 +1948,6 @@ AWM子弹数量: 20
               " placeholder="📋" readonly>
             </div>
           </div>
-        </div>
-
-        <!-- 
-            ============================================
-            📱 客服二维码更换说明：
-            - 将你的客服二维码图片命名为 qrcode.png（或qrcode.jpg）
-            - 放在与此HTML文件同一目录下
-            - 然后将下面img标签的src属性改为：src="qrcode.png"
-            
-            示例：
-            <img src="qrcode.png" alt="客服二维码">
-            ============================================
-            -->
-        <div class="contact-image">
-          <p style="color: #d63031; font-weight: 700; margin-bottom: 10px; cursor: pointer; text-decoration: underline;" onclick="showAgeWarning()">
-            ⚠️
-            注意：未成年及实名认证不是本人的请告知客服！！！否则打了不结账！！！！
-          </p>
-          <p style="color: #d63031; font-weight: 700; margin-bottom: 10px; cursor: pointer; text-decoration: underline;" onclick="showAgeWarning()">
-            点击查看实名查询教程和更改实名教程
-          </p>
         </div>
       </div>
     </div>
@@ -2401,6 +2401,20 @@ AWM子弹数量: 20
         updateCalculations();
       }
 
+      // 一键清除并粘贴填充
+      function clearAndPaste() {
+        clearAllFields();
+        const textarea = document.getElementById("quickFillText");
+        textarea.focus();
+        const inputHandler = () => {
+          if (textarea.value.trim()) {
+            parseQuickFill();
+            textarea.removeEventListener("input", inputHandler);
+          }
+        };
+        textarea.addEventListener("input", inputHandler);
+      }
+
       // 解析快速填充
       function parseQuickFill() {
         // 步骤2: 粘贴信息并解析
@@ -2610,13 +2624,15 @@ AWM子弹数量: 20
       function copyToClipboard() {
         // 验证估价金额
         const rentPrice = parseFloat(document.getElementById("recycleRent").textContent);
+        const hafuCoin = parseFloat(document.getElementById("hafuCoin").value) || 0;
+        
         if (rentPrice === 0) {
-          alert("估价金额为0，请检查是否填写了哈夫币纯币");
+          alert("❌ 估价金额为0\n\n问题原因：【哈夫币纯币】未填写或为0\n\n请输入哈夫币数量（单位M，1M=100万）");
           return;
         }
+        
         if (rentPrice > 5000) {
-          alert("估价金额异常（超过5000元），请检查数据是否正确");
-          return;
+          alert("⚠️ 提醒：估价金额超过5000元（" + rentPrice + "元）\n\n【哈夫币纯币】数量为：" + hafuCoin + "M\n\n请确认数据是否正确，1M=100万");
         }
 
         const data = {
