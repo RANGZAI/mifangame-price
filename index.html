@@ -2404,16 +2404,15 @@ AWM子弹数量: 20
       // 一键清除并粘贴填充
       function clearAndPaste() {
         clearAllFields();
-        const textarea = document.getElementById("quickFillText");
-        textarea.focus();
-        const inputHandler = () => {
-          if (textarea.value.trim()) {
-            parseQuickFill();
-            textarea.removeEventListener("input", inputHandler);
-          }
-        };
-        textarea.addEventListener("input", inputHandler);
+        document.getElementById("quickFillText").focus();
       }
+
+      // 页面加载时为文本框添加粘贴监听
+      document.getElementById("quickFillText").addEventListener("paste", function() {
+        setTimeout(() => {
+          parseQuickFill();
+        }, 10);
+      });
 
       // 解析快速填充
       function parseQuickFill() {
